@@ -1044,7 +1044,6 @@ local function UpdateSettings(name, t)
 						v.value = value;
 						if t.callback then
 							t.callback(v.key, "input", v.value)
-							print(v.value)
 						end
 					end
 				end
