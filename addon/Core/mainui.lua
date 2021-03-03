@@ -85,7 +85,7 @@ local secondary_text = CreateText(frame, "Select your secondary rotation:", 0, -
 local generic_text = CreateText(frame, "Select your generic rotation:", 0, -108, 0.1, 0.5, 0.8, 1);
 
 local function GetFilename(file)
-	return file:match("^.*\\(.*).lua$") or file:match("^.*\\(.*).enc$") or file
+	return file:match("^.*\\(.*).lua$") or file:match("^.*\\(.*).enc$") or file:match("^.*\\(.*).out$") or file
 end
 
 local profiles = ni.functions.getprofilesfor(select(2, UnitClass("player"))) or { };
@@ -211,7 +211,7 @@ mainsettings:Hide();
 local settings = CreateFrame("frame", nil, frame);
 settings:ClearAllPoints();
 settings:SetWidth(200);
-settings:SetHeight(325);
+settings:SetHeight(365);
 settings:SetPoint("TOPLEFT", frame, -195, 0);
 settings:SetBackdrop(backdrop);
 settings:EnableMouse(true);
@@ -660,11 +660,11 @@ globaledit:Show();
 
 CreateText(mainsettings, "Check for Updates:", 0, -370, 0.8, 0.1, 0.1, 1);
 CreateMainButton(mainsettings, 62, 22, "Core", -31, 30, function()
-	ni.functions.webrequest("https://api.github.com/repos/scizzydo/ni/commits?sha=beta", nil, false, function(code, body)
+	ni.functions.webrequest("https://api.github.com/repos/scizzydo/ni/commits", nil, false, function(code, body)
 		if code == 200 then
 			local t = ni.utils.json.decode(body);
-			if t[2]["sha"] ~= "9974905c4cfa8cadc31eb15a9d03ea06b54d46fe" then
-				ni.functions.open("https://github.com/scizzydo/ni/archive/beta.zip")
+			if t[2]["sha"] ~= "82408de3ebfb0a1e724d8c9b67b3f43d0a35cbb5" then
+				ni.functions.open("https://github.com/scizzydo/ni/archive/master.zip")
 			else
 				message("Up to date on core");
 			end
@@ -676,7 +676,7 @@ CreateMainButton(mainsettings, 62, 22, "Release", 31, 30, function()
 	ni.functions.webrequest("https://api.github.com/repos/scizzydo/ni/releases", nil, false, function(code, body)
 		if code == 200 then
 			local t = ni.utils.json.decode(body);
-			if t[2]["tag_name"] ~= "v0.0.46-beta" then
+			if t[2]["tag_name"] ~= "v0.0.47" then
 				ni.functions.open(t[1]["assets"][1]["browser_download_url"])
 			else
 				message("Up to date on releases");
@@ -747,17 +747,36 @@ CreateKeyDropDown(settings, mods, 0, -195, "custom");
 CreateDropDownText(settings, "Main Tank Override:", 0, -220);
 CreateEditBox(settings, 0, -238, "mainTank");
 
-CreateDropDownText(settings, "Off Tank Override:", 0, -258);
-CreateEditBox(settings, 0, -276, "offTank");
+CreateDropDownText(settings, "Enabled:", -10, -258);
+CreateCheckBox(settings, 28, -256, ni.vars.units.mainTankEnabled, function(self)
+	if self:GetChecked() then
+		ni.vars.units.mainTankEnabled = true;
+	else
+		ni.vars.units.mainTankEnabled = false;
+	end
+end);
 
-CreateCheckBox(settings, 28, -296, ni.vars.combat.melee, function(self)
+CreateDropDownText(settings, "Off Tank Override:", 0, -276);
+CreateEditBox(settings, 0, -294, "offTank");
+
+CreateDropDownText(settings, "Enabled:", -10, -314);
+CreateCheckBox(settings, 28, -312, ni.vars.units.offTankEnabled, function(self)
+	if self:GetChecked() then
+		ni.vars.units.offTankEnabled = true;
+	else
+		ni.vars.units.offTankEnabled = false;
+	end
+end);
+
+
+CreateCheckBox(settings, 30, -334, ni.vars.combat.melee, function(self)
 	if self:GetChecked() then
 		ni.vars.combat.melee = true;
 	else
 		ni.vars.combat.melee = false;
 	end
 end);
-CreateDropDownText(settings, "Is Melee:", -13, -298); 
+CreateDropDownText(settings, "Is Melee:", -10, -336); 
 
 local mmb_name = ni.utils.GenerateRandomName();
 main_ui.minimap_icon = CreateFrame("Button", mmb_name, Minimap);
