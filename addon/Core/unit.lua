@@ -676,7 +676,11 @@ unit.istappedbyallthreatlist = function(t)
 	return (unit.exists(t) and select(2, unit.dynamicflags(t))) or false
 end
 unit.islootable = function(t)
-	return (unit.exists(t) and select(3, unit.dynamicflags(t))) or false
+	if ni.vars.build<50000 then 
+            return (unit.exists(t) and select(3, unit.dynamicflags(t))) or false
+        else
+            return (unit.exists(t) and select(9, unit.dynamicflags(t))) or false
+        end
 end
 unit.istaggedbyme = function(t)
 	return (unit.exists(t) and select(7, unit.dynamicflags(t))) or false
